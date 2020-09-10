@@ -13,4 +13,8 @@ class Engine:
     def start(self):
         self.output.log("========= Starting bot =========")
         self.output.log("Loading scripts")
-        self.scriptList = self.scriptEngine.loadAll()
+        scriptList = self.scriptEngine.loadAll()
+
+        # For fun, let's run the first script
+        if scriptList is not None:
+            scriptList[0].process()

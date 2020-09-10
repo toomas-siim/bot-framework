@@ -6,6 +6,8 @@ import imp
 # Class ScriptEngine
 # Loads and initializes scripts.
 class ScriptEngine:
+    scriptList = []
+
     def __init__(self, outputEngine):
         self.output = outputEngine
 
@@ -17,4 +19,5 @@ class ScriptEngine:
             if file[:-9] == "script.":
                 self.output.log("Loading script: " + file)
                 script = imp.load_source('script-' + file, path + file)
-                script = script.Script(self.output)
+                self.scriptList.append(script.Script(self.output))
+        return self.scriptList
