@@ -13,6 +13,7 @@ class Engine:
         self.output.log("========= Starting bot =========")
         self.output.log("Loading scripts")
         scriptList = self.scriptEngine.loadAll()
+        self.guiEngine.initWindow(self.scriptEngine.getScriptNames())
 
         # For fun, let's run the first script
         if scriptList is not None:

@@ -20,3 +20,9 @@ class ScriptEngine:
                 self.output.log("Loading script: " + file)
                 self.scriptList.append(imp.load_source('script-' + file, path + file).Script(self.output))
         return self.scriptList
+
+    def getScriptNames(self):
+        names = []
+        for scriptHandle in self.scriptList:
+            names.append(scriptHandle.name)
+        return names
