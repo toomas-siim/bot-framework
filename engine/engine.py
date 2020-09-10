@@ -5,10 +5,9 @@ import imp
 # Class: Engine
 class Engine:
     def __init__(self):
-        output = imp.load_source('output-engine', './engine/engine.output.py')
-        script = imp.load_source('script-engine', './engine/engine.script.py')
-        self.output = output.OutputEngine()
-        self.scriptEngine = script.ScriptEngine(self.output)
+        self.output = imp.load_source('output-engine', './engine/engine.output.py').OutputEngine()
+        self.scriptEngine = imp.load_source('script-engine', './engine/engine.script.py').ScriptEngine(self.output)
+        self.guiEngine = imp.load_source('gui-engine', './engine/engine.gui.py').GuiEngine(self.output)
 
     def start(self):
         self.output.log("========= Starting bot =========")

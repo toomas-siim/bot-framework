@@ -18,6 +18,5 @@ class ScriptEngine:
         for file in files:
             if file[:-9] == "script.":
                 self.output.log("Loading script: " + file)
-                script = imp.load_source('script-' + file, path + file)
-                self.scriptList.append(script.Script(self.output))
+                self.scriptList.append(imp.load_source('script-' + file, path + file).Script(self.output))
         return self.scriptList
