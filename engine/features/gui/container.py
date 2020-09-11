@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from tkinter import *
 
 class Container:
@@ -24,7 +25,7 @@ class Container:
         # Run script process
         for item in self.scriptEngine.scriptList:
             if item.name == selectedList:
-                item.process()
+                item.process(self.statusLabel)
 
     def createBtn(self, frame, name, command):
         btn = Button(frame, text = name, command = command)
