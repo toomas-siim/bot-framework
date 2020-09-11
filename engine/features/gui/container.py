@@ -21,6 +21,10 @@ class Container:
         selectedList = self.selectedScript.get(ACTIVE)
         self.statusLabel.set("Running script '" + selectedList + "'")
         self.output.log("Selected list: " + selectedList)
+        # Run script process
+        for item in self.scriptEngine.scriptList:
+            if item.name == selectedList:
+                item.process()
 
     def createBtn(self, frame, name, command):
         btn = Button(frame, text = name, command = command)
