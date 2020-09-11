@@ -7,8 +7,26 @@ class Container:
         self.scriptEngine = scriptEngine
 
     def process(self):
-        self.createLabel(self.createContainer(TOP, 20, 10, 20), "Eve online bot")
-        self.createScriptList(self.createContainer(TOP, 20, 40, 60), self.scriptEngine.getScriptNames())
+        self.createLabel(self.createContainer(TOP, 160, 10, 20), "Eve online bot")
+        self.createLabel(self.createContainer(TOP, 20, 60, 20), "Choose your script")
+        self.selectedScript = self.createScriptList(self.createContainer(TOP, 200, 40, 60), self.scriptEngine.getScriptNames())
+        self.createBtn(self.createContainer(TOP, 320, 200, 60), "Start", self.startBtnEvent)
+        self.createBtn(self.createContainer(TOP, 20, 200, 60), "Exit", self.exitBtnEvent)
+        self.statusLabel = self.createLabel(self.createContainer(TOP, 20, 160, 20), "...")
+
+    def exitBtnEvent(self):
+        exit()
+
+    def startBtnEvent(self):
+        selectedList = self.selectedScript.get(ACTIVE)
+        self.statusLabel.set("Running script '" + selectedList + "'")
+        self.output.log("Selected list: " + selectedList)
+
+    def createBtn(self, frame, name, command):
+        btn = Button(frame, text = name, command = command)
+        btn.pack()
+
+        return btn
 
     def createScriptList(self, frame, scripts):
         list = Listbox(frame, selectmode=SINGLE)
@@ -16,11 +34,15 @@ class Container:
             list.insert(END, item)
         list.pack()
 
-    def createLabel(self, frame, text):
-        label = Label(frame, text = text)
-        label.pack()
+        return list
 
-        return label
+    def createLabel(self, frame, text):
+        v = StringVar()
+        label = Label(frame, textvariable=v)
+        label.pack()
+        v.set(text)
+
+        return v
 
     def createContainer(self, side, x, y, h):
         frame = Frame(self.windowHandle)
