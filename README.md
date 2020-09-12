@@ -2,6 +2,20 @@
 Basically this is an EVE online bot framework made in python.
 Few example scripts in /scripts/
 
+## Usage
+Using it is pretty simple, just run bot.py
+
+```
+python bot.py
+```
+
+You should see an UI momentarily and just select the script you need to run.
+
+Guidelines should appear near the exit button, where the status label is located.
+
+PS! You need to install dependencies as well. (recommend pip install)
+
+
 ## New script
 To create a new script, you need to add a file in /scripts/
 
@@ -25,15 +39,32 @@ class Script:
         self.status = "stopped"
 ```
 
-## Usage
-Using it is pretty simple, just run bot.py
+## Events & Methods
+### setContainer
+A script has a designated area in the ui to access.
+
+This will give you a tkinter Frame to handle.
 
 ```
-python bot.py
+def setContainer(container):
+    self.container = container
 ```
 
-You should see an UI momentarily and just select the script you need to run.
+### halt
+Halt event, when a user presses the stop button.
 
-Guidelines should appear near the exit button, where the status label is located.
+```
+def halt(self):
+    self.status = "stopped"
+```
 
-PS! You need to install dependencies as well. (recommend pip install)
+### process
+When a script is started the process method is called.
+
+statusLabel is passed on, so the script can take over status monitoring.
+
+```
+def process(self, statusLabel):
+    self.statusLabel = statusLabel
+    statusLabel.set("My script process has started.")
+```
