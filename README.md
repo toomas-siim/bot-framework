@@ -4,6 +4,7 @@ Few example scripts in /scripts/
 
 ## New script
 To create a new script, you need to add a file in /scripts/
+
 Ie script.myscript.py
 
 Inside it, create a class named Script
@@ -23,5 +24,7 @@ class Script:
 
 ## Usage
 Using it is pretty simple, just run bot.py
+
 You should see an UI momentarily and just select the script you need to run.
+
 Guidelines should appear near the exit button, where the status label is located.
