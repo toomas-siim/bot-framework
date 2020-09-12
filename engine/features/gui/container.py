@@ -29,7 +29,7 @@ class Container:
             if item.name == selectedList:
                 if self.scriptStatus == 0:
                     self.startBtn.config(text="Stop")
-                    item.process(self.statusLabel, self.startBtn)
+                    item.process(self.statusLabel)
                 else:
                     self.startBtn.config(text="Start")
                     item.halt()

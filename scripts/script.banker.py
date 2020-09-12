@@ -15,9 +15,8 @@ class Script:
         self.output = outputEngine
         self.output.log("Banker script initialized")
 
-    def process(self, statusLabel, startBtn):
+    def process(self, statusLabel):
         self.statusLabel = statusLabel
-        self.startBtn = startBtn
         statusLabel.set("Banker process started.")
         self.requestItemPos()
 

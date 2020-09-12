@@ -17,9 +17,8 @@ class Script:
         self.output = outputEngine
         self.output.log("My script initialized")
 
-    def process(self, statusLabel, startBtn):
+    def process(self, statusLabel):
         self.statusLabel = statusLabel
-        self.startBtn = startBtn
         statusLabel.set("My script process has started.")
 
     def halt(self):
