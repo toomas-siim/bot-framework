@@ -11,7 +11,7 @@ Inside it, create a class named Script
 ### Example:
 ```
 class Script:
-    name = "Banker"
+    name = "MyScript"
 
     def __init__(self, outputEngine):
         self.output = outputEngine
