@@ -17,6 +17,8 @@ class Container:
         self.createBtn(self.createContainer(TOP, 20, 200, 60), "Exit", self.exitBtnEvent)
         self.statusLabel = self.createLabel(self.createContainer(TOP, 20, 160, 20), "...")
 
+        self.scriptContainer = self.createContainer(TOP, 160, 120, 20)
+
     def exitBtnEvent(self):
         exit()
 
@@ -30,10 +32,21 @@ class Container:
                 if self.scriptStatus == 0:
                     self.startBtn.config(text="Stop")
                     item.process(self.statusLabel)
+                    if self.scriptHasMethod(item, "setContainer") == True:
+                        item.setContainer(self.scriptContainer)
+                    self.scriptStatus = 1
                 else:
                     self.startBtn.config(text="Start")
                     item.halt()
+                    for widget in self.scriptContainer.winfo_children():
+                        widget.destroy()
+                    self.scriptStatus = 0
 
+    def scriptHasMethod(self, instance, method):
+        method = getattr(self, method, None)
+        if callable(method):
+            return True
+        return False
 
     def createBtn(self, frame, name, command):
         btn = Button(frame, text = name, command = command)

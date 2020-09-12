@@ -23,6 +23,9 @@ class Script:
     def halt(self):
         self.status = "stopped"
 
+    def setContainer(container):
+        self.container = container
+
     def startBanking(self):
         self.statusLabel.set("Banking, bank deposit interval 20 sec.")
         time.sleep(2)
