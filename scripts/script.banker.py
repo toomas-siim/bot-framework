@@ -31,10 +31,12 @@ class Script:
 
     def dragMouse(self, fromPos, toPos):
         mouse = Controller()
+        originalPosition = mouse.position
         mouse.position = (fromPos[0], fromPos[1])
-        mouse.press(Button.left)
         time.sleep(0.5)
-        mouse.move(toPos[0] - fromPos[0], toPos[0] - fromPos[1])
+        mouse.press(Button.left)
+        time.sleep(0.25)
+        mouse.position = (toPos[0], toPos[1])
         time.sleep(0.5)
         mouse.release(Button.left)
 
