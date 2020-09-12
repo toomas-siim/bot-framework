@@ -1,5 +1,6 @@
 # Eve-bot
 Basically this is an EVE online bot framework made in python.
+WIP - Integrated with an neural net (CNN).
 Few example scripts in /scripts/
 
 ## Usage
@@ -39,7 +40,25 @@ class Script:
         self.status = "stopped"
 ```
 
+## Neural net methods
+### recordAction
+Record an action for data collection.
+
+Used in training bots.
+
+```
+recordAction("banking")
+```
+
 ## Events & Methods
+### setNeuralNet
+This will give you a neural net class to call for functions.
+
+```
+def setNeuralNet(neuralNet):
+    self.neuralNet = neuralNet
+```
+
 ### setContainer
 A script has a designated area in the ui to access.
 
