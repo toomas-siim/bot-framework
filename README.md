@@ -28,6 +28,12 @@ class Script:
 ## Usage
 Using it is pretty simple, just run bot.py
 
+```
+python bot.py
+```
+
 You should see an UI momentarily and just select the script you need to run.
 
 Guidelines should appear near the exit button, where the status label is located.
+
+PS! You need to install dependencies as well. (recommend pip install)
