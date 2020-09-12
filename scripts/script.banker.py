@@ -9,24 +9,32 @@ class Script:
     name = "Banker"
     itemPos = None
     bankPos = None
+    status = "stopped"
 
     def __init__(self, outputEngine):
         self.output = outputEngine
         self.output.log("Banker script initialized")
 
-    def process(self, statusLabel):
+    def process(self, statusLabel, startBtn):
         self.statusLabel = statusLabel
+        self.startBtn = startBtn
         statusLabel.set("Banker process started.")
         self.requestItemPos()
+
+    def halt(self):
+        self.status = "stopped"
 
     def startBanking(self):
         self.statusLabel.set("Banking, bank deposit interval 20 sec.")
         time.sleep(2)
+        self.status = "running"
         while 1:
             self.statusLabel.set("Waiting")
             time.sleep(20)
             self.statusLabel.set("Banking")
             self.dragMouse(self.itemPos, self.bankPos)
+            if self.status == "stopped":
+                break
 
 
     def dragMouse(self, fromPos, toPos):

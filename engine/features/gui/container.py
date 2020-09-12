@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from tkinter import *
 
 class Container:
+    scriptStatus = 0
+
     def __init__(self, outputEngine, windowHandle, scriptEngine):
         self.output = outputEngine
         self.windowHandle = windowHandle
@@ -11,7 +13,7 @@ class Container:
         self.createLabel(self.createContainer(TOP, 160, 10, 20), "Eve online bot")
         self.createLabel(self.createContainer(TOP, 20, 60, 20), "Choose your script")
         self.selectedScript = self.createScriptList(self.createContainer(TOP, 200, 40, 60), self.scriptEngine.getScriptNames())
-        self.createBtn(self.createContainer(TOP, 320, 200, 60), "Start", self.startBtnEvent)
+        self.startBtn = self.createBtn(self.createContainer(TOP, 320, 200, 60), "Start", self.startBtnEvent)
         self.createBtn(self.createContainer(TOP, 20, 200, 60), "Exit", self.exitBtnEvent)
         self.statusLabel = self.createLabel(self.createContainer(TOP, 20, 160, 20), "...")
 
@@ -25,7 +27,13 @@ class Container:
         # Run script process
         for item in self.scriptEngine.scriptList:
             if item.name == selectedList:
-                item.process(self.statusLabel)
+                if self.scriptStatus == 0:
+                    self.startBtn.config(text="Stop")
+                    item.process(self.statusLabel, self.startBtn)
+                else:
+                    self.startBtn.config(text="Start")
+                    item.halt()
+
 
     def createBtn(self, frame, name, command):
         btn = Button(frame, text = name, command = command)
