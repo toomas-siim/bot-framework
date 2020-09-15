@@ -36,6 +36,7 @@ class Script:
             self.statusLabel.set("Banking")
             self.dragMouse(self.itemPos, self.bankPos)
             if self.status == "stopped":
+                self.statusLabel.set("Script stopped")
                 break
 
 
