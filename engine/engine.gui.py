@@ -14,6 +14,7 @@ class GuiEngine:
         container = imp.load_source('gui.container', './engine/features/gui/container.py').Container(self.output, self.windowHandle, scriptEngine)
         container.process()
 
+        self.windowHandle.update()
         self.windowHandle.mainloop()
 
     def startBtnEvent(self):

@@ -4,6 +4,7 @@ logging.basicConfig()
 from pynput.mouse import Listener
 from pynput.mouse import Button, Controller
 import time
+import imp
 
 class Script:
     name = "Banker"

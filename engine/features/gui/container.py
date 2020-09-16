@@ -49,7 +49,7 @@ class Container:
         return False
 
     def createBtn(self, frame, name, command):
-        btn = Button(frame, text = name, command = command)
+        btn = Button(frame, text = name, command = command, fg = "red")
         btn.pack()
 
         return btn
