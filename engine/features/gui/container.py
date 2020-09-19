@@ -26,12 +26,12 @@ class Container:
 
     def startBtnEvent(self):
         selectedList = self.selectedScript.get(ACTIVE)
-        self.statusLabel.set("Running script '" + selectedList + "'")
-        self.output.log("Selected list: " + selectedList)
         # Run script process
         for item in self.scriptEngine.scriptList:
             if item.name == selectedList:
                 if self.scriptStatus == 0:
+                    self.statusLabel.set("Running script '" + selectedList + "'")
+                    self.output.log("Selected list: " + selectedList)
                     self.startBtn.config(text="Stop")
                     if self.scriptHasMethod(item, "setContainer") == True:
                         item.setContainer(self.scriptContainer)
@@ -43,6 +43,7 @@ class Container:
                     self.scriptStatus = 1
                 else:
                     self.startBtn.config(text="Start")
+                    self.statusLabel.set("Stopping script")
                     item.halt()
                     for widget in self.scriptContainer.winfo_children():
                         widget.destroy()
