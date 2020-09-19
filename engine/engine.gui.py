@@ -11,7 +11,8 @@ class GuiEngine:
         self.windowHandle = Tk()
         self.windowHandle.geometry("400x250")
 
-        container = imp.load_source('gui.container', './engine/features/gui/container.py').Container(self.output, self.windowHandle, scriptEngine)
+        inputEngine = imp.load_source('input.engine', './engine/engine.input.py').InputEngine(self.output)
+        container = imp.load_source('gui.container', './engine/features/gui/container.py').Container(self.output, self.windowHandle, scriptEngine, inputEngine)
         container.process()
 
         self.windowHandle.update()

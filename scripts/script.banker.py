@@ -3,6 +3,7 @@ import logging
 logging.basicConfig()
 from pynput.mouse import Listener
 from pynput.mouse import Button, Controller
+from pynput import keyboard
 import time
 import imp
 
@@ -19,13 +20,17 @@ class Script:
     def process(self, statusLabel):
         self.statusLabel = statusLabel
         statusLabel.set("Banker process started.")
-        self.requestItemPos()
+        self.inputEngine.addKeyboardListener(self.onKeyboardRelease)
+
 
     def halt(self):
         self.status = "stopped"
 
-    def setContainer(container):
+    def setContainer(self, container):
         self.container = container
+
+    def setInputEngine(self, inputEngine):
+        self.inputEngine = inputEngine
 
     def startBanking(self):
         self.statusLabel.set("Banking, bank deposit interval 20 sec.")
@@ -52,30 +57,14 @@ class Script:
         time.sleep(0.5)
         mouse.release(Button.left)
 
-    def requestBankPos(self):
-        self.statusLabel.set("Left click to bank to record position.")
-        self.listeningType = "bank"
-        self.mouseListener = Listener(on_click=self.onClick)
-        self.mouseListener.start()
-        self.mouseListener.wait()
-
-    def requestItemPos(self):
-        self.statusLabel.set("Left click to item to record position.")
-        self.listeningType = "item"
-        self.mouseListener = Listener(on_click=self.onClick)
-        self.mouseListener.start()
-        self.mouseListener.wait()
-
-    def onClick(self, x, y, button, pressed):
-        if button == Button.left:
-            if pressed:
-                if self.listeningType is not None:
-                    self.statusLabel.set("Left click pressed. Type: " + self.listeningType)
-                    if self.listeningType == "item":
-                        self.itemPos = [x, y]
-                        self.mouseListener.stop()
-                        self.requestBankPos()
-                    else:
-                        self.bankPos = [x, y]
-                        self.mouseListener.stop()
-                        self.startBanking()
+    def onKeyboardRelease(self, keysPressed):
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
+            mouse = Controller()
+            self.statusLabel.set("Item position set.")
+            self.itemPos = mouse.position
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("B") in keysPressed:
+            mouse = Controller()
+            self.statusLabel.set("Bank position set.")
+            self.bankPos = mouse.position
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("S") in keysPressed:
+            self.startBanking()
