@@ -14,6 +14,12 @@ class InputEngine:
         self.output = output
         self.initListeners()
 
+    def closeCallback(self, type, index):
+        if type == "mouse":
+            del self.mouseCallbacks[index]
+        else:
+            del self.keyboardCallbacks[index]
+
     def closeListeners(self):
         self.keyboardListener.stop()
         self.mouseListener.stop()
@@ -27,9 +33,11 @@ class InputEngine:
 
     def addMouseListener(self, method):
         self.mouseCallbacks.append(method)
+        return len(self.mouseCallbacks) - 1
 
     def addKeyboardListener(self, method):
         self.keyboardCallbacks.append(method)
+        return len(self.keyboardCallbacks) - 1
 
     def onMouseClick(self, x, y, button, pressed):
         if pressed:

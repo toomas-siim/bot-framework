@@ -1,6 +1,7 @@
 import pyautogui
 #import win32gui
 import time
+from PIL import ImageGrab
 from pynput.mouse import Controller
 
 # Class CaptureEngine
@@ -41,3 +42,7 @@ class CaptureEngine:
         im = pyautogui.screenshot(region=(x, y, x + size[0], y + size[1]))
         im.save('./data/screenshot/screenshot.' + time.time() + '.jpg')
         return im
+
+    def getPixel(self, x, y):
+        px = ImageGrab.grab().load()
+        return px[x, y]

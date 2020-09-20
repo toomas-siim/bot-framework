@@ -9,7 +9,7 @@ class GuiEngine:
     def initWindow(self, scriptEngine):
         scripts = scriptEngine.getScriptNames()
         self.windowHandle = Tk()
-        self.windowHandle.geometry("400x250")
+        self.windowHandle.geometry("400x400")
 
         inputEngine = imp.load_source('input.engine', './engine/engine.input.py').InputEngine(self.output)
         container = imp.load_source('gui.container', './engine/features/gui/container.py').Container(self.output, self.windowHandle, scriptEngine, inputEngine)

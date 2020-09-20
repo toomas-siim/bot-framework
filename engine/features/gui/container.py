@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from tkinter import ttk
 from tkinter import *
+import imp
 
 class Container:
     scriptStatus = 0
@@ -12,14 +13,16 @@ class Container:
         self.inputEngine = inputEngine
 
     def process(self):
+        self.ocrEngine = imp.load_source('ocr.engine', './engine/engine.ocr.py').OCREngine(self.output)
+
         self.createLabel(self.createContainer(TOP, 160, 10, 20), "Eve online bot")
         self.createLabel(self.createContainer(TOP, 20, 60, 20), "Choose your script")
         self.selectedScript = self.createScriptList(self.createContainer(TOP, 200, 40, 60), self.scriptEngine.getScriptNames())
-        self.startBtn = self.createBtn(self.createContainer(TOP, 290, 200, 60), "Start", self.startBtnEvent)
-        self.createBtn(self.createContainer(TOP, 20, 200, 60), "Exit", self.exitBtnEvent)
-        self.statusLabel = self.createLabel(self.createContainer(TOP, 20, 160, 20), "...")
+        self.startBtn = self.createBtn(self.createContainer(TOP, 290, 360, 60), "Start", self.startBtnEvent)
+        self.createBtn(self.createContainer(TOP, 20, 360, 60), "Exit", self.exitBtnEvent)
+        self.statusLabel = self.createLabel(self.createContainer(TOP, 20, 330, 20), "...")
 
-        self.scriptContainer = self.createContainer(TOP, 160, 120, 20)
+        self.scriptContainer = self.createContainer(TOP, 20, 100, 200)
 
     def exitBtnEvent(self):
         exit()
@@ -33,13 +36,22 @@ class Container:
                     self.statusLabel.set("Running script '" + selectedList + "'")
                     self.output.log("Selected list: " + selectedList)
                     self.startBtn.config(text="Stop")
-                    if self.scriptHasMethod(item, "setContainer") == True:
+                    try:
                         item.setContainer(self.scriptContainer)
-                    if self.scriptHasMethod(item, "setInputEngine") == True:
-                        item.setInputEngine(self.inputEngine)
-                    item.setInputEngine(self.inputEngine)
+                    except AttributeError:
+                        self.output.log("Script setContainer method missing.")
 
-                    item.process(self.statusLabel)
+                    try:
+                        item.setInputEngine(self.inputEngine)
+                    except AttributeError:
+                        self.output.log("Script setInputEngine method missing.")
+
+                    try:
+                        item.setOcrEngine(self.ocrEngine)
+                    except AttributeError:
+                        self.output.log("Script setOcrEngine method missing.")
+
+                    item.process()
                     self.scriptStatus = 1
                 else:
                     self.startBtn.config(text="Start")
