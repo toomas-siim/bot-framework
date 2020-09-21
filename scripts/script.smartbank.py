@@ -24,10 +24,9 @@ class Script:
         self.statusLabel.set("Shift + Q to stop the bot.")
         self.status = "running"
         while 1:
-            time.sleep(0.1)
+            time.sleep(1)
             if self.status == "stopped":
                 self.statusLabel.set("...")
-                self.inputEngine.closeCallback("mouse", self.callback)
                 self.inputEngine.closeCallback("keyboard", self.keyboardCallback)
                 break
 
@@ -58,22 +57,41 @@ class Script:
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("S") in keysPressed:
             if self.bankPos == None:
                 self.requestBankPos()
+            elif len(self.itemData) == 0:
+                self.requestItems()
             else:
-                self.startBanking()
+                if self.status == "running":
+                    self.halt()
+                else:
+                    self.startBanking()
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("Q") in keysPressed:
             self.halt()
 
+        # Set item
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
+            mouse = Controller()
+            time.sleep(1) # Allow time to move mouse away
+            color = self.captureEngine.getPixel(mouse.position[0], mouse.position[1])
+            self.itemData.append((mouse.position, color, time.time()))
+            self.statusLabel.set("Item " + str(len(self.itemData)) + " saved, Shift+S to start botting.")
+
+        # Set bank
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("B") in keysPressed:
+            mouse = Controller()
+            time.sleep(1) # Allow time to move mouse away
+            self.bankPos = mouse.position
+            self.statusLabel.set("Bank set, Shift + I to set empty item slot.")
+            self.requestItems()
+
     def requestBankPos(self):
-        self.statusLabel.set("Left click to set bank position.")
+        self.statusLabel.set("Shift + B to set bank position.")
         if self.callback is not None:
             self.inputEngine.closeCallback("mouse", self.callback)
-        self.callback = self.inputEngine.addMouseListener(self.onBankClick)
 
     def requestItems(self):
-        self.statusLabel.set("Left click to select an item..")
+        self.statusLabel.set("Shift + I to select an empty item slot.")
         if self.callback is not None:
             self.inputEngine.closeCallback("mouse", self.callback)
-        self.callback = self.inputEngine.addMouseListener(self.onClick)
 
     def halt(self):
         self.status = "stopped"
@@ -84,20 +102,6 @@ class Script:
     def setInputEngine(self, inputEngine):
         self.inputEngine = inputEngine
 
-    def onBankClick(self, pos, button):
-        if self.callback is not None:
-            if mouseButton.left == button:
-                mouse = Controller()
-                self.bankPos = mouse.position
-                self.statusLabel.set("Bank set, Left click to set item location.")
-                self.requestItems()
-
-    def onClick(self, pos, button):
-        if self.callback is not None:
-            if mouseButton.left == button:
-                color = self.captureEngine.getPixel(pos[0], pos[1])
-                self.itemData.append((pos, color, time.time()))
-                self.statusLabel.set("Item " + str(len(self.itemData)) + " saved, Shift+S to start botting.")
 
     def setContainer(self, container):
         self.container = container

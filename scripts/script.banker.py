@@ -50,7 +50,7 @@ class Script:
         self.status = "running"
         while 1:
             self.statusLabel.set("Waiting")
-            time.sleep(20)
+            time.sleep(60)
             if self.status == "stopped":
                 self.statusLabel.set("Script stopped")
                 break
