@@ -1,6 +1,7 @@
 import pyautogui
 #import win32gui
 import time
+import os
 from PIL import ImageGrab
 from pynput.mouse import Controller
 
@@ -10,9 +11,10 @@ from pynput.mouse import Controller
 class CaptureEngine:
     def __init__(self, output):
         self.output = output
+        self.basePath = os.path.dirname(os.path.realpath(__file__))
         self.output.log("Capture engine initialized.")
 
-    def screenshot(window_title=None):
+    def screenshot(self, window_title=None):
         if window_title:
             hwnd = win32gui.FindWindow(None, window_title)
             if hwnd:
@@ -33,14 +35,14 @@ class CaptureEngine:
             im = pyautogui.screenshot()
             return im
 
-    def screenshotMouse(size):
+    def screenshotMouse(self, size):
         mouse = Controller()
         x = mouse.position[0]
         y = mouse.position[1]
 
         # take screenshot
         im = pyautogui.screenshot(region=(x, y, x + size[0], y + size[1]))
-        im.save('./data/screenshot/screenshot.' + time.time() + '.jpg')
+        im.save(self.basePath + '/data/screenshot/screenshot.' + str(time.time()) + '.jpg')
         return im
 
     def getPixel(self, x, y):
