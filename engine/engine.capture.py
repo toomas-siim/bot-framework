@@ -35,6 +35,12 @@ class CaptureEngine:
             im = pyautogui.screenshot()
             return im
 
+    def screenshotRegion(self, dimensions):
+        # take screenshot
+        im = pyautogui.screenshot(region=dimensions)
+        im.save(self.basePath + '/../data/screenshot/screenshot.dimension.' + str(time.time()) + '.jpg')
+        return im
+
     def screenshotMouse(self, size):
         mouse = Controller()
         x = mouse.position[0]
@@ -42,7 +48,7 @@ class CaptureEngine:
 
         # take screenshot
         im = pyautogui.screenshot(region=(x, y, x + size[0], y + size[1]))
-        im.save(self.basePath + '/../data/screenshot/screenshot.' + str(time.time()) + '.jpg')
+        im.save(self.basePath + '/../data/screenshot/screenshot.mouse.' + str(time.time()) + '.jpg')
         return im
 
     def getPixel(self, x, y):
