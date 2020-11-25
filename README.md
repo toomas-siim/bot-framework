@@ -37,9 +37,6 @@ class Script:
     def process(self, statusLabel):
         self.statusLabel = statusLabel
         statusLabel.set("My script process has started.")
-
-    def halt(self):
-        self.status = "stopped"
 ```
 
 ## Neural net methods
