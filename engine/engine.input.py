@@ -27,6 +27,7 @@ class InputEngine:
 
     def initControllers(self):
         self.mouseController = pynput.mouse.Controller()
+        self.keyboardController = keyboard.Controller()
 
     def initListeners(self):
         self.keyboardListener = keyboard.Listener(on_press=self.onKeyPress, on_release=self.onKeyRelease)

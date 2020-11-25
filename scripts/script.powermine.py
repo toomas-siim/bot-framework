@@ -6,11 +6,13 @@ from pynput.mouse import Button as mouseButton, Controller
 from pynput import keyboard
 from tkinter import *
 import time
+import random
 import imp
 
 class Script:
     name = "Powerminer"
-    itemPos = None
+    rockPositions = []
+    inventoryLocation = None
     status = "stopped"
 
     def __init__(self, outputEngine):
@@ -19,7 +21,8 @@ class Script:
 
     def process(self):
         self.statusLabel = self.createLabel(self.container, "Menu:")
-        self.createLabel(self.container, "Shift + I to set item location.")
+        self.createLabel(self.container, "Shift + R to set new rock location.")
+        self.createLabel(self.container, "Shift + I to set inventory item location.")
         self.createLabel(self.container, "Shift + S to start/stop script.")
         self.inputEngine.addKeyboardListener(self.onKeyboardRelease)
 
@@ -41,26 +44,48 @@ class Script:
         self.inputEngine = inputEngine
         self.inputEngine.initControllers()
 
-    def startBanking(self):
+    def startMining(self):
         self.statusLabel.set("Powerminer, interval 5 sec.")
         time.sleep(2)
         self.status = "running"
         while 1:
-            self.statusLabel.set("Waiting")
-            time.sleep(5)
             if self.status == "stopped":
                 self.statusLabel.set("Script stopped")
                 break
-            self.statusLabel.set("Mining")
-            self.inputEngine.mouseMove(self.itemPos, 100)
+            self.mineIteration()
+
+    def mineIteration(self):
+        for rock in self.rockPositions:
+            # Mine rock
+            self.statusLabel.set("Mining rock")
+            self.inputEngine.mouseMove(rock, 50 + (random.random() * 20))
+            self.inputEngine.mouseController.press(mouseButton.left)
+            time.sleep((random.random() * 2) + 3)
+
+            # Drop rock
+            self.statusLabel.set("Dropping rock")
+            self.inputEngine.mouseMove(self.inventoryLocation, 50 + (random.random() * 20))
+            time.sleep(random.random())
+            self.inputEngine.keyboardController.press(keyboard.Key.shift)
+            time.sleep(random.random() / 2)
+            self.inputEngine.mouseController.press(mouseButton.left)
+            time.sleep(random.random() / 4)
+            self.inputEngine.mouseController.release(mouseButton.left)
+            time.sleep(random.random() / 2)
+            self.inputEngine.keyboardController.release(keyboard.Key.shift)
+            time.sleep(random.random() / 2)
 
     def onKeyboardRelease(self, keysPressed):
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
-            mouse = Controller()
             self.statusLabel.set("Item position set.")
-            self.itemPos = mouse.position
+            self.inventoryLocation = self.inputEngine.mouseController.position
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("R") in keysPressed:
+            if not (self.inputEngine.mouseController.position in self.rockPositions):
+                self.rockPositions.append(self.inputEngine.mouseController.position)
+                self.statusLabel.set("Rock position set. Total rocks: " + str(len(self.rockPositions)))
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("S") in keysPressed:
             if self.status == "running":
-                self.status = "stopped"
+                self.statusLabel.set("Pausing script")
+                self.halt()
             else:
-                self.startBanking()
+                self.startMining()
