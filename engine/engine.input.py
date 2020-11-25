@@ -1,5 +1,6 @@
-from pynput.mouse import Listener
+import pynput.mouse
 from pynput import keyboard
+import time
 
 # Class InputEngine
 # Mouse, keyboard listening etc...
@@ -24,12 +25,53 @@ class InputEngine:
         self.keyboardListener.stop()
         self.mouseListener.stop()
 
+    def initControllers(self):
+        self.mouseController = pynput.mouse.Controller()
+
     def initListeners(self):
         self.keyboardListener = keyboard.Listener(on_press=self.onKeyPress, on_release=self.onKeyRelease)
         self.keyboardListener.start()
 
-        self.mouseListener = Listener(on_click=self.onMouseClick)
+        self.mouseListener = pynput.mouse.Listener(on_click=self.onMouseClick)
         self.mouseListener.start()
+
+    def mouseMove(self, coords, speed):
+        # Fetch current position
+        curPosition = [self.mouseController.position[0], self.mouseController.position[1]]
+
+        # Calculate step speeds for each axis
+        steps = [1, 1]
+        steps[0] = abs(self.mouseController.position[0] - coords[0]) / speed
+        steps[1] = abs(self.mouseController.position[1] - coords[1]) / speed
+
+        # Move mouse loop
+        while not (coords[0] == curPosition[0] and coords[1] == curPosition[1]):
+            # x axis
+            if curPosition[0] < coords[0]:
+                if curPosition[0] + steps[0] > coords[0]:
+                    curPosition[0] = coords[0]
+                else:
+                    curPosition[0] += steps[0]
+            elif curPosition[0] > coords[0]:
+                if curPosition[0] - steps[0] < coords[0]:
+                    curPosition[0] = coords[0]
+                else:
+                    curPosition[0] -= steps[0]
+
+            # y axis
+            if curPosition[1] < coords[1]:
+                if curPosition[1] + steps[1] > coords[1]:
+                    curPosition[1] = coords[1]
+                else:
+                    curPosition[1] += steps[1]
+            elif curPosition[1] > coords[1]:
+                if curPosition[1] - steps[1] < coords[1]:
+                    curPosition[1] = coords[1]
+                else:
+                    curPosition[1] -= steps[1]
+
+            self.mouseController.position = (curPosition[0], curPosition[1])
+            time.sleep(1/60)
 
     def addMouseListener(self, method):
         self.mouseCallbacks.append(method)
