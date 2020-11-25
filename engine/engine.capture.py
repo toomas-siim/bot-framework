@@ -42,7 +42,7 @@ class CaptureEngine:
 
         # take screenshot
         im = pyautogui.screenshot(region=(x, y, x + size[0], y + size[1]))
-        im.save(self.basePath + '/data/screenshot/screenshot.' + str(time.time()) + '.jpg')
+        im.save(self.basePath + '/../data/screenshot/screenshot.' + str(time.time()) + '.jpg')
         return im
 
     def getPixel(self, x, y):
