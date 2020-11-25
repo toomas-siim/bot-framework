@@ -62,13 +62,16 @@ class Script:
         for rock in self.rockPositions:
             # Mine rock
             self.statusLabel.set("Mining rock")
-            self.inputEngine.mouseMove(rock, 30 + (random.random() * 10))
+            randPos = (rock[0] + (random.random() * 10), rock[1] + (random.random() * 10))
+            self.inputEngine.mouseMove(randPos, 30 + (random.random() * 10))
             self.inputEngine.mouseController.press(mouseButton.left)
             time.sleep((random.random() * 2) + 3)
 
             # Drop rock
             self.statusLabel.set("Dropping rock")
-            self.inputEngine.mouseMove(self.inventoryLocation, 30 + (random.random() * 10))
+
+            randPos = (self.inventoryLocation[0] + (random.random() * 10), self.inventoryLocation[1] + (random.random() * 10))
+            self.inputEngine.mouseMove(randPos, 30 + (random.random() * 10))
             time.sleep(random.random() / 6)
             self.inputEngine.keyboardController.press(keyboard.Key.shift)
             time.sleep(random.random() / 4)
