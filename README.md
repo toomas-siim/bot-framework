@@ -1,5 +1,7 @@
-# Eve-bot
-Basically this is an EVE online bot framework made in python.
+# Generic Bot Framework
+Basically this is a generic bot framework.
+Solutions vary from simple autoclickers to advanced AI bots.
+There are various libraries included to be used.
 WIP - Integrated with an neural net (CNN).
 Few example scripts in /scripts/
 
