@@ -9,6 +9,8 @@ class InputEngine:
     mouseCallbacks = []
     keyboardCallbacks = []
     keysPressed = []
+    mouseController = None
+    keyboardController = None
 
     def __init__(self, output):
         output.log("Input engine initialized.")

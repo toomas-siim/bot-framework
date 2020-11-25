@@ -73,3 +73,33 @@ When a script is started the process method is called.
 def process(self):
     self.output.log("My script process has started.")
 ```
+
+# Available functionality
+## InputEngine
+This is used to handle input methods (mouse & keyboard)
+Uses pynput library.
+### Accessable variables
+Variables that can be accessed through the class.
+```
+# Initialized using InputEngine.initControllers
+InputEngine.mouseController
+InputEngine.keyboardController
+```
+
+### addKeyboardListener
+```
+# Initialized using InputEngine.initListeners
+InputEngine.addKeyboardListener(self.myFunction)
+```
+### addMouseListener
+```
+# Initialized using InputEngine.initListeners
+InputEngine.addMouseListener(self.myFunction)
+```
+### setInputEngine
+```
+def setInputEngine(self, inputEngine):
+    self.inputEngine = inputEngine
+    self.inputEngine.initControllers()
+    self.inputEngine.initListeners()
+```
