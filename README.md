@@ -35,7 +35,7 @@ class Script:
         self.output.log("My script initialized")
 
     def process(self):
-        statusLabel.set("My script process has started.")
+        self.output.log("My script process has started.")
 ```
 
 ## Neural net methods
