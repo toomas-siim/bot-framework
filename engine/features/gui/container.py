@@ -16,6 +16,7 @@ class Container:
 
     def process(self):
         self.ocrEngine = imp.load_source('ocr.engine', self.basePath + '/../../engine.ocr.py').OCREngine(self.output)
+        self.randomizerEngine = imp.load_source('randomizer.engine', self.basePath + '/../../engine.randomizer.py').RandomizerEngine(self.output)
 
         self.createLabel(self.createContainer(TOP, 160, 10, 20), "Eve online bot")
         self.createLabel(self.createContainer(TOP, 20, 60, 20), "Choose your script")
@@ -42,6 +43,11 @@ class Container:
                         item.setContainer(self.scriptContainer)
                     except AttributeError:
                         self.output.log("Script setContainer method missing.")
+
+                    try:
+                        item.setRandomizer(self.randomizerEngine)
+                    except AttributeError:
+                        self.output.log("Script setRandomizer method missing.")
 
                     try:
                         item.setInputEngine(self.inputEngine)

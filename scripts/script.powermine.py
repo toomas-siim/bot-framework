@@ -42,6 +42,9 @@ class Script:
     def setContainer(self, container):
         self.container = container
 
+    def setRandomizer(self, randomizerEngine):
+        self.randomizerEngine = randomizerEngine
+
     def setInputEngine(self, inputEngine):
         self.inputEngine = inputEngine
         self.inputEngine.initControllers()
@@ -60,6 +63,9 @@ class Script:
 
     def mineIteration(self):
         for rock in self.rockPositions:
+             # Generate random paus if needed.
+            self.randomizerEngine.randomPause()
+
             # Mine rock
             self.statusLabel.set("Mining rock")
             randPos = (rock[0] + (random.random() * 10), rock[1] + (random.random() * 10))
