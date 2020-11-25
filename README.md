@@ -34,8 +34,7 @@ class Script:
         self.output = outputEngine
         self.output.log("My script initialized")
 
-    def process(self, statusLabel):
-        self.statusLabel = statusLabel
+    def process(self):
         statusLabel.set("My script process has started.")
 ```
 
