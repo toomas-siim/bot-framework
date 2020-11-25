@@ -89,9 +89,11 @@ class InputEngine:
 
     def onKeyPress(self, key):
         self.keysPressed.append(key)
-
-    def onKeyRelease(self, key):
         for callback in self.keyboardCallbacks:
             callback(self.keysPressed)
-        if key in self.keysPressed:
-            del self.keysPressed[self.keysPressed.index(key)]
+
+    def onKeyRelease(self, key):
+        if len(self.keysPressed) > 0:
+            for keyPressed in self.keysPressed:
+                if key in self.keysPressed:
+                    self.keysPressed.remove(key)

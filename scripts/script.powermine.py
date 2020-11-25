@@ -8,6 +8,7 @@ from tkinter import *
 import time
 import random
 import imp
+import threading
 
 class Script:
     name = "Powerminer"
@@ -23,7 +24,8 @@ class Script:
         self.statusLabel = self.createLabel(self.container, "Menu:")
         self.createLabel(self.container, "Shift + R to set new rock location.")
         self.createLabel(self.container, "Shift + I to set inventory item location.")
-        self.createLabel(self.container, "Shift + S to start/stop script.")
+        self.createLabel(self.container, "Shift + S to start script.")
+        self.createLabel(self.container, "Shift + Q to halt script.")
         self.inputEngine.addKeyboardListener(self.onKeyboardRelease)
 
     def createLabel(self, frame, text):
@@ -35,7 +37,7 @@ class Script:
         return v
 
     def halt(self):
-        self.status = "stopped"
+        Script.status = "stopped"
 
     def setContainer(self, container):
         self.container = container
@@ -47,12 +49,14 @@ class Script:
     def startMining(self):
         self.statusLabel.set("Powerminer, interval 5 sec.")
         time.sleep(2)
-        self.status = "running"
         while 1:
-            if self.status == "stopped":
+            if Script.status == "stopped":
                 self.statusLabel.set("Script stopped")
                 break
-            self.mineIteration()
+            else:
+                self.mineIteration()
+
+        self.output.log("Powerminer script paused")
 
     def mineIteration(self):
         for rock in self.rockPositions:
@@ -65,7 +69,7 @@ class Script:
             # Drop rock
             self.statusLabel.set("Dropping rock")
             self.inputEngine.mouseMove(self.inventoryLocation, 50 + (random.random() * 20))
-            time.sleep(random.random())
+            time.sleep(random.random() / 6)
             self.inputEngine.keyboardController.press(keyboard.Key.shift)
             time.sleep(random.random() / 2)
             self.inputEngine.mouseController.press(mouseButton.left)
@@ -77,15 +81,23 @@ class Script:
 
     def onKeyboardRelease(self, keysPressed):
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
+            self.inputEngine.keysPressed = [] # Clear keys
             self.statusLabel.set("Item position set.")
             self.inventoryLocation = self.inputEngine.mouseController.position
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("R") in keysPressed:
+            self.inputEngine.keysPressed = [] # Clear keys
             if not (self.inputEngine.mouseController.position in self.rockPositions):
                 self.rockPositions.append(self.inputEngine.mouseController.position)
                 self.statusLabel.set("Rock position set. Total rocks: " + str(len(self.rockPositions)))
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("S") in keysPressed:
-            if self.status == "running":
-                self.statusLabel.set("Pausing script")
-                self.halt()
-            else:
-                self.startMining()
+            self.inputEngine.keysPressed = [] # Clear keys
+            if not (Script.status == "running"):
+                Script.status = "running"
+                self.output.log("Powerminer script running")
+                # Async process
+                thr = threading.Thread(target=self.startMining, args=(), kwargs={})
+                thr.start()
+        if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("Q") in keysPressed:
+            self.inputEngine.keysPressed = [] # Clear keys
+            self.statusLabel.set("Pausing script")
+            self.halt()
