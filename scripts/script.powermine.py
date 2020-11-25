@@ -62,22 +62,22 @@ class Script:
         for rock in self.rockPositions:
             # Mine rock
             self.statusLabel.set("Mining rock")
-            self.inputEngine.mouseMove(rock, 50 + (random.random() * 20))
+            self.inputEngine.mouseMove(rock, 30 + (random.random() * 10))
             self.inputEngine.mouseController.press(mouseButton.left)
             time.sleep((random.random() * 2) + 3)
 
             # Drop rock
             self.statusLabel.set("Dropping rock")
-            self.inputEngine.mouseMove(self.inventoryLocation, 50 + (random.random() * 20))
+            self.inputEngine.mouseMove(self.inventoryLocation, 30 + (random.random() * 10))
             time.sleep(random.random() / 6)
             self.inputEngine.keyboardController.press(keyboard.Key.shift)
-            time.sleep(random.random() / 2)
-            self.inputEngine.mouseController.press(mouseButton.left)
             time.sleep(random.random() / 4)
+            self.inputEngine.mouseController.press(mouseButton.left)
+            time.sleep(random.random() / 6)
             self.inputEngine.mouseController.release(mouseButton.left)
-            time.sleep(random.random() / 2)
+            time.sleep(random.random() / 4)
             self.inputEngine.keyboardController.release(keyboard.Key.shift)
-            time.sleep(random.random() / 2)
+            time.sleep(random.random() / 4)
 
     def onKeyboardRelease(self, keysPressed):
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
