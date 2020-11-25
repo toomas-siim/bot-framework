@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from tkinter import ttk
 from tkinter import *
+import os
 import imp
 
 class Container:
@@ -11,9 +12,10 @@ class Container:
         self.windowHandle = windowHandle
         self.scriptEngine = scriptEngine
         self.inputEngine = inputEngine
+        self.basePath = os.path.dirname(os.path.realpath(__file__))
 
     def process(self):
-        self.ocrEngine = imp.load_source('ocr.engine', './engine/engine.ocr.py').OCREngine(self.output)
+        self.ocrEngine = imp.load_source('ocr.engine', self.basePath + '/../../engine.ocr.py').OCREngine(self.output)
 
         self.createLabel(self.createContainer(TOP, 160, 10, 20), "Eve online bot")
         self.createLabel(self.createContainer(TOP, 20, 60, 20), "Choose your script")

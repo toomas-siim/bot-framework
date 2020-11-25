@@ -3,6 +3,7 @@ import imp
 from pynput.mouse import Button as mouseButton, Controller
 from pynput import keyboard
 from tkinter import *
+import os
 
 class Script:
     name = "Smart Banking"
@@ -13,8 +14,9 @@ class Script:
 
     def __init__(self, outputEngine):
         self.output = outputEngine
+        self.basePath = os.path.dirname(os.path.realpath(__file__))
         self.output.log("SmartBank initialized")
-        self.captureEngine = imp.load_source('capture.engine', './engine/engine.capture.py').CaptureEngine(self.output)
+        self.captureEngine = imp.load_source('capture.engine', self.basePath + '/../engine/engine.capture.py').CaptureEngine(self.output)
 
     def process(self):
         self.statusLabel.set("Shift + S to start configuration.")

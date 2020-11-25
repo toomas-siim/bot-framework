@@ -1,5 +1,5 @@
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, dirname, realpath
 import imp
 
 
@@ -10,9 +10,10 @@ class ScriptEngine:
 
     def __init__(self, outputEngine):
         self.output = outputEngine
+        self.basePath = dirname(realpath(__file__))
 
     def loadAll(self):
-        path = './scripts/'
+        path = self.basePath + '/../scripts/'
         files = [f for f in listdir(path) if isfile(join(path, f))]
 
         for file in files:
