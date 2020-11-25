@@ -39,15 +39,6 @@ class Script:
 ```
 
 ## Neural net methods
-### recordAction
-Record an action for data collection.
-
-Used in training bots.
-
-```
-recordAction("banking")
-```
-
 ## Events & Methods
 ### setNeuralNet
 This will give you a neural net class to call for functions.
