@@ -69,10 +69,7 @@ def halt(self):
 ### process
 When a script is started the process method is called.
 
-statusLabel is passed on, so the script can take over status monitoring.
-
 ```
-def process(self, statusLabel):
-    self.statusLabel = statusLabel
-    statusLabel.set("My script process has started.")
+def process(self):
+    self.output.log("My script process has started.")
 ```
