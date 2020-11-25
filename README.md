@@ -44,7 +44,7 @@ class Script:
 This will give you a neural net class to call for functions.
 
 ```
-def setNeuralNet(neuralNet):
+def setNeuralNet(self, neuralNet):
     self.neuralNet = neuralNet
 ```
 
@@ -54,8 +54,17 @@ A script has a designated area in the ui to access.
 This will give you a tkinter Frame to handle.
 
 ```
-def setContainer(container):
+def setContainer(self, container):
     self.container = container
+```
+
+### setRandomizer
+Randomizer helps to random your script, so that actions wouldn't look too automatic.
+This will hurt performance somewhat, but makes you a little bit more secure from detection.
+
+```
+def setRandomizer(self, randomizerEngine):
+    self.randomizerEngine = randomizerEngine
 ```
 
 ### halt
