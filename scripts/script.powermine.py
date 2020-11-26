@@ -71,14 +71,13 @@ class Script:
             randPos = (rock[0] + (random.random() * 10), rock[1] + (random.random() * 10))
             self.inputEngine.mouseMove(randPos, 30 + (random.random() * 10))
             self.inputEngine.mouseController.press(mouseButton.left)
-            time.sleep((random.random() * 2) + 3)
 
             # Drop rock
             self.statusLabel.set("Dropping rock")
 
             randPos = (self.inventoryLocation[0] + (random.random() * 10), self.inventoryLocation[1] + (random.random() * 10))
             self.inputEngine.mouseMove(randPos, 30 + (random.random() * 10))
-            time.sleep(random.random() / 6)
+            time.sleep((random.random() * 2) + 3)
             self.inputEngine.keyboardController.press(keyboard.Key.shift)
             time.sleep(random.random() / 4)
             self.inputEngine.mouseController.press(mouseButton.left)

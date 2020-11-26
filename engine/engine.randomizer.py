@@ -15,8 +15,8 @@ class RandomizerEngine:
         # Minimum pause
         if time.time() - self.lastPause > 300:
             randomData = random.randint(0, 100)
-            # 3-10% chance to make a pause
-            if randomData > random.randint(90, 97):
+            # 1-3% chance to make a pause
+            if randomData >= random.randint(97, 99):
                 # make a random pause. (up to 3 min)
                 self.lastPause = time.time()
                 pauseDuration = random.randint(90, 180)
