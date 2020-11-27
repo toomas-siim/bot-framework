@@ -4,6 +4,7 @@ import imp
 import win32gui
 from tkinter import *
 import _thread
+import json
 
 class Script:
     name = "AI"
@@ -15,6 +16,7 @@ class Script:
         self.output = outputEngine
         self.basePath = os.path.dirname(os.path.realpath(__file__))
         self.captureEngine = imp.load_source('capture.engine', self.basePath + '/../engine/engine.capture.py').CaptureEngine(self.output)
+        self.captureEngine = imp.load_source('capture.engine', self.basePath + '/../engine/engine.capture.py').CaptureEngine(self.output)
         self.output.log("AI initialized")
 
     def process(self):
@@ -24,6 +26,7 @@ class Script:
         self.recordBtn = self.createButton(self.container, "Record", self.startRecord)
         self.statusLabel.set("AI process started.")
         self.recordingThread = _thread.start_new_thread(self.recordLoop, ())
+        self.mouseRecordingThread = _thread.start_new_thread(self.mouseRecordLoop, ())
 
     def startRecord(self):
         if self.recordStatus == False:
@@ -35,20 +38,59 @@ class Script:
             self.statusLabel.set("Recording stopped.")
             self.recordBtn.set('Record')
 
+    def readyForRecording(self):
+        if self.recordStatus == True:
+            activeHandle = win32gui.GetForegroundWindow()
+            selectedWindow = self.windowSelection.get()
+            selectedAction = self.actionType.get()
+            if len(selectedAction) > 0 and len(selectedWindow) > 0:
+                if str(activeHandle) in selectedWindow:
+                    return True
+        return False
+
+    def logMouseData(self, coord, button, pressed):
+        if self.readyForRecording() == True:
+            self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), str(button), coord, pressed))
+
+    def logKeyboardData(self, key, pressed):
+        if self.readyForRecording() == True:
+            self.keyLoggerData.append(('keyboard', int(round(time.time() * 1000)), str(key), pressed))
+
+    def mouseRecordLoop(self):
+        self.output.log("Mouse record loop started")
+        self.inputEngine.addMouseListener(self.logMouseData)
+        self.inputEngine.addKeyboardListener(self.logKeyboardData)
+        self.keyLoggerData = []
+        lastUpdate = time.time()
+        while True:
+            time.sleep(0.01)
+            if self.readyForRecording() == True and time.time() > lastUpdate: # Update once per second, as with screen.
+                lastUpdate = time.time()
+                self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), self.inputEngine.mouseController.position))
+                if len(self.keyLoggerData) > 0:
+                    self.writeRecord(self.keyLoggerData)
+                    self.keyLoggerData = []
+
+    def writeRecord(self, record):
+        activeHandle = win32gui.GetForegroundWindow()
+        selectedAction = self.actionType.get()
+        windowTitle = win32gui.GetWindowText(activeHandle)
+
+        f = open(self.basePath + '/../data/screenshot/' + windowTitle + '/data.' + selectedAction + '.' + str(time.time()) + '.json', "w")
+        f.write(json.dumps(record))
+        f.close()
+
     def recordLoop(self):
         self.output.log("Record loop started")
         while True:
             time.sleep(1)
-            if self.recordStatus == True:
+            if self.readyForRecording() == True:
                 activeHandle = win32gui.GetForegroundWindow()
-                selectedWindow = self.windowSelection.get()
                 selectedAction = self.actionType.get()
-                if len(selectedAction) > 0 and len(selectedWindow) > 0:
-                    if str(activeHandle) in selectedWindow:
-                        windowTitle = win32gui.GetWindowText(activeHandle)
-                        # Screenshot
-                        shot = self.captureEngine.screenshot(window_title = windowTitle)
-                        shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(time.time()) + '.jpg')
+                windowTitle = win32gui.GetWindowText(activeHandle)
+                # Screenshot
+                shot = self.captureEngine.screenshot(window_title = windowTitle)
+                shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(time.time()) + '.jpg')
 
     def changeWindow(self, event):
         selectedWindow = self.captureEngine.getWindowFromHandle(self.windowSelection.get())
@@ -63,6 +105,11 @@ class Script:
 
     def setContainer(self, container):
         self.container = container
+
+    def setInputEngine(self, engine):
+        self.inputEngine = engine
+        self.inputEngine.initControllers()
+        self.inputEngine.initListeners()
 
     def createEntry(self, frame, label):
         top = Frame(frame)

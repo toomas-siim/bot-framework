@@ -87,15 +87,18 @@ class InputEngine:
     def onMouseClick(self, x, y, button, pressed):
         if pressed:
             for callback in self.mouseCallbacks:
-                callback((x, y), button)
+                callback((x, y), button, pressed)
 
     def onKeyPress(self, key):
         self.keysPressed.append(key)
         for callback in self.keyboardCallbacks:
-            callback(self.keysPressed)
+            callback(key, 1)
 
     def onKeyRelease(self, key):
         if len(self.keysPressed) > 0:
             for keyPressed in self.keysPressed:
                 if key in self.keysPressed:
                     self.keysPressed.remove(key)
+
+        for callback in self.keyboardCallbacks:
+            callback(key, 0)

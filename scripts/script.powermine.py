@@ -87,7 +87,8 @@ class Script:
             self.inputEngine.keyboardController.release(keyboard.Key.shift)
             time.sleep(random.random() / 4)
 
-    def onKeyboardRelease(self, keysPressed):
+    def onKeyboardRelease(self, key, pressed):
+        keysPressed = self.inputEngine.keysPressed
         if keyboard.Key.shift in keysPressed and keyboard.KeyCode.from_char("I") in keysPressed:
             self.inputEngine.keysPressed = [] # Clear keys
             self.statusLabel.set("Item position set.")
