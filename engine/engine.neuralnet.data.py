@@ -25,4 +25,4 @@ class NeuralNetDataEngine:
         dataX = dataX.reshape(len(dataX), resolution[0], resolution[1], 1)
         dataY = dataY.reshape(len(dataY), resolution[0], resolution[1], 1)
 
-    return (dataX, dataY)
+        return (dataX, dataY)
