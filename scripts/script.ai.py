@@ -12,6 +12,7 @@ class Script:
     status = "stopped"
     recordStatus = False
     recordingThread = None
+    selectedWindowTitle = None
 
     def __init__(self, outputEngine):
         self.output = outputEngine
@@ -43,34 +44,42 @@ class Script:
         screenData = self.getTrainingScreenData()
         actionData = self.getTrainingActionData()
 
-        absoluteData = []
+        absoluteInputData = []
+        absoluteOutputData = []
 
         # Handle
-        for key in actionData:
-            screenshot = screenData[intval(key / 1000)]
-            absoluteData.append(actionData[key] + screenshot)
-        self.output.log(absoluteData)
+        for key in actionData.keys():
+            if int(int(key) / 1000) in screenData.keys():
+                absoluteOutputData.append(actionData[key])
+                screenshot = screenData.get(int(int(key) / 1000))
+                absoluteInputData.append(screenshot)
+            else:
+                self.output.log("Missing screenshot for: " + str(int(int(key) / 1000)))
 
     def getTrainingScreenData(self):
+        selectedAction = self.actionType.get()
         # Fetch screenshots
-        screens = glob.glob(self.getDataPath . 'screenshot.' + selectedAction + '*.jpg')
+        screens = glob.glob(self.getDataPath() + 'screenshot.' + selectedAction + '.*.jpg')
         screenshotData = {}
         for screen in screens:
-            screenInfo = os.path.basename(screen).explode(".")
+            basename = str(os.path.basename(screen))
+            screenInfo = basename.split(".")
             if len(screenInfo) == 4 and screenInfo[0] == "screenshot":
-                screenshotData[screenInfo[2]] = self.neuralEngine.dataEngine.imageToData(screen)
+                screenshotData[int(screenInfo[2])] = self.neuralEngine.dataEngine.imageToData(screen)
+        return screenshotData
 
     def getTrainingActionData(self):
+        selectedAction = self.actionType.get()
         # Fetch action data
-        data = glob.glob(self.getDataPath . 'data.' + selectedAction + '*.json')
+        data = glob.glob(self.getDataPath() + 'data.' + selectedAction + '.*.json')
         actionData = {}
         for action in data:
-            actionInfo = os.path.basename(action).explode(".")
+            actionInfo = os.path.basename(action).split(".")
             if len(actionInfo) == 4 and actionInfo[0] == "data":
                 f = open(action, "r")
                 content = json.loads(f.read())
                 formatted = []
-                for v in content.items():
+                for v in content:
                     if v[0] == "mouse-pos":
                         v[0] = 1
                     elif v[0] == "mouse":
@@ -79,7 +88,7 @@ class Script:
                         v[0] = 3
                     else:
                         v[0] = 4
-                    actionData[v[1]] = v
+                    actionData[int(v[1])] = v
         return actionData
 
     def startRun(self):
@@ -126,11 +135,11 @@ class Script:
         self.inputEngine.addMouseListener(self.logMouseData)
         self.inputEngine.addKeyboardListener(self.logKeyboardData)
         self.keyLoggerData = []
-        lastUpdate = time.time()
+        lastUpdate = int(time.time())
         while True:
             time.sleep(0.01)
-            if self.readyForRecording() == True and time.time() > lastUpdate: # Update once per second, as with screen.
-                lastUpdate = time.time()
+            if self.readyForRecording() == True and int(time.time()) > lastUpdate: # Update once per second, as with screen.
+                lastUpdate = int(time.time())
                 mousePos = self.getMousePosition()
                 if mousePos:
                     self.keyLoggerData.append(('mouse-pos', int(round(time.time() * 1000)), mousePos, 0))
@@ -139,14 +148,11 @@ class Script:
                         self.keyLoggerData = []
 
     def getDataPath(self):
-        activeHandle = win32gui.GetForegroundWindow()
-        windowTitle = win32gui.GetWindowText(activeHandle)
-
-        return self.basePath + '/../data/screenshot/' + windowTitle + "/"
+        return self.basePath + '/../data/screenshot/' + self.selectedWindowTitle + "/"
 
     def writeRecord(self, record):
         selectedAction = self.actionType.get()
-        f = open(self.getDataPath() + 'data.' + selectedAction + '.' + str(time.time()) + '.json', "w")
+        f = open(self.getDataPath() + 'data.' + selectedAction + '.' + str(int(time.time())) + '.json', "w")
         f.write(json.dumps(record))
         f.close()
 
@@ -156,7 +162,7 @@ class Script:
         windowTitle = win32gui.GetWindowText(activeHandle)
         # Screenshot
         shot = self.captureEngine.screenshot(window_title = windowTitle)
-        shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(time.time()) + '.jpg')
+        shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(int(time.time())) + '.jpg')
 
     def recordLoop(self):
         self.output.log("Record loop started")
@@ -169,6 +175,7 @@ class Script:
         selectedWindow = self.captureEngine.getWindowFromHandle(self.windowSelection.get())
         # Make data storage
         try:
+            self.selectedWindowTitle = selectedWindow[1]
             os.makedirs(self.basePath + '/../data/screenshot/' + selectedWindow[1])
         except OSError as e:
             self.output.log("Path already exists for " + selectedWindow[1])

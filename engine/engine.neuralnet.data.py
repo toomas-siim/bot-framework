@@ -1,5 +1,6 @@
 import os
 from keras.preprocessing import image
+import np
 
 # Class NeuralNetDataEngine
 # Neural network data functionality.
