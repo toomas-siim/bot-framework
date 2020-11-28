@@ -51,12 +51,10 @@ class Script:
     def logMouseData(self, coord, button, pressed):
         if self.readyForRecording() == True:
             self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), str(button), pressed))
-            self.createScreen()
 
     def logKeyboardData(self, key, pressed):
         if self.readyForRecording() == True:
             self.keyLoggerData.append(('keyboard', int(round(time.time() * 1000)), str(key), pressed))
-            self.createScreen()
 
     def getMousePosition(self):
         activeHandle = win32gui.GetForegroundWindow()
