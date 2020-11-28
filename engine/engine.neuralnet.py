@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Flatten
+import os
 
 
 # Class NeuralNetEngine
@@ -10,18 +11,13 @@ from keras.layers import Dense, Conv2D, Flatten
 
 class NeuralNetEngine:
     def __init__(self, output):
+        basePath = os.path.dirname(os.path.realpath(__file__))
+        self.dataEngine = imp.load_source('data.engine', basePath + '/engine.neuralnet.data.py').NeuralNetDataEngine()
         self.output = output
         output.log("Neural net initialized.")
 
     def plotImage(self, image):
         plt.imshow(image)
-
-    def processData(self, dataX, dataY):
-        resolution = (1920, 1080)
-        dataX = dataX.reshape(len(dataX), resolution[0], resolution[1], 1)
-        dataY = dataY.reshape(len(dataY), resolution[0], resolution[1], 1)
-
-    return (dataX, dataY)
 
     def encode(self, dataX, dataY):
         dataX = to_categorical(dataX)

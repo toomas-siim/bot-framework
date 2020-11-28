@@ -24,9 +24,24 @@ class Script:
         self.windowSelection = self.createSelection(self.container, self.captureEngine.activeWindows.items())
         self.actionType = self.createEntry(self.container, 'Action type')
         self.recordBtn = self.createButton(self.container, "Record", self.startRecord)
+        self.trainButtons()
         self.statusLabel.set("AI process started.")
         self.recordingThread = _thread.start_new_thread(self.recordLoop, ())
         self.mouseRecordingThread = _thread.start_new_thread(self.mouseRecordLoop, ())
+
+    def trainButtons(self):
+        top = Frame(self.container)
+        top.pack()
+        self.trainBtn = self.createButton(top, "Train", self.startTrain, LEFT)
+        self.runBtn = self.createButton(top, "Run", self.startRun, RIGHT)
+
+    def startTrain(self):
+        self.output.log("Training started.")
+        self.statusLabel.set("Starting training...")
+
+    def startRun(self):
+        self.output.log("Running started.")
+        self.statusLabel.set("Running...")
 
     def startRecord(self):
         if self.recordStatus == False:
@@ -75,7 +90,7 @@ class Script:
                 lastUpdate = time.time()
                 mousePos = self.getMousePosition()
                 if mousePos:
-                    self.keyLoggerData.append(('mouse-pos', int(round(time.time() * 1000)), mousePos))
+                    self.keyLoggerData.append(('mouse-pos', int(round(time.time() * 1000)), mousePos, 0))
                     if len(self.keyLoggerData) > 0:
                         self.writeRecord(self.keyLoggerData)
                         self.keyLoggerData = []
@@ -150,10 +165,10 @@ class Script:
 
         return v
 
-    def createButton(self, frame, name, callback):
+    def createButton(self, frame, name, callback, side = TOP):
         v = StringVar()
-        btn = Button(frame, textvariable=v, command = callback, padx = 60)
-        btn.pack()
+        btn = Button(frame, textvariable=v, command = callback, padx = 20)
+        btn.pack(side = side)
         v.set(name)
 
         return v
