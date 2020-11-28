@@ -51,10 +51,12 @@ class Script:
     def logMouseData(self, coord, button, pressed):
         if self.readyForRecording() == True:
             self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), str(button), pressed))
+            self.createScreen()
 
     def logKeyboardData(self, key, pressed):
         if self.readyForRecording() == True:
             self.keyLoggerData.append(('keyboard', int(round(time.time() * 1000)), str(key), pressed))
+            self.createScreen()
 
     def getMousePosition(self):
         activeHandle = win32gui.GetForegroundWindow()
@@ -89,17 +91,20 @@ class Script:
         f.write(json.dumps(record))
         f.close()
 
+    def createScreen(self):
+        activeHandle = win32gui.GetForegroundWindow()
+        selectedAction = self.actionType.get()
+        windowTitle = win32gui.GetWindowText(activeHandle)
+        # Screenshot
+        shot = self.captureEngine.screenshot(window_title = windowTitle)
+        shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(time.time()) + '.jpg')
+
     def recordLoop(self):
         self.output.log("Record loop started")
         while True:
             time.sleep(1)
             if self.readyForRecording() == True:
-                activeHandle = win32gui.GetForegroundWindow()
-                selectedAction = self.actionType.get()
-                windowTitle = win32gui.GetWindowText(activeHandle)
-                # Screenshot
-                shot = self.captureEngine.screenshot(window_title = windowTitle)
-                shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(time.time()) + '.jpg')
+                self.createScreen()
 
     def changeWindow(self, event):
         selectedWindow = self.captureEngine.getWindowFromHandle(self.windowSelection.get())
