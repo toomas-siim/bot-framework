@@ -11,8 +11,8 @@ class NeuralNetDataEngine:
         self.output.log("Neural net data engine initialized.")
 
     def imageToData(self, path):
-        image = image.load_img(path)
-        input_arr = image.img_to_array(image)
+        img = image.load_img(path)
+        input_arr = image.img_to_array(img)
         input_arr = np.array([input_arr])  # Convert single image to a batch.
         return input_arr
 
