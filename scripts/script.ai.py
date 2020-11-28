@@ -5,6 +5,7 @@ import win32gui
 from tkinter import *
 import _thread
 import json
+import glob
 
 class Script:
     name = "AI"
@@ -16,7 +17,7 @@ class Script:
         self.output = outputEngine
         self.basePath = os.path.dirname(os.path.realpath(__file__))
         self.captureEngine = imp.load_source('capture.engine', self.basePath + '/../engine/engine.capture.py').CaptureEngine(self.output)
-        self.captureEngine = imp.load_source('capture.engine', self.basePath + '/../engine/engine.capture.py').CaptureEngine(self.output)
+        self.neuralEngine = imp.load_source('neural.engine', self.basePath + '/../engine/engine.neuralnet.py').NeuralNetEngine(self.output)
         self.output.log("AI initialized")
 
     def process(self):
@@ -38,6 +39,48 @@ class Script:
     def startTrain(self):
         self.output.log("Training started.")
         self.statusLabel.set("Starting training...")
+        selectedAction = self.actionType.get()
+        screenData = self.getTrainingScreenData()
+        actionData = self.getTrainingActionData()
+
+        absoluteData = []
+
+        # Handle
+        for key in actionData:
+            screenshot = screenData[intval(key / 1000)]
+            absoluteData.append(actionData[key] + screenshot)
+        self.output.log(absoluteData)
+
+    def getTrainingScreenData(self):
+        # Fetch screenshots
+        screens = glob.glob(self.getDataPath . 'screenshot.' + selectedAction + '*.jpg')
+        screenshotData = {}
+        for screen in screens:
+            screenInfo = os.path.basename(screen).explode(".")
+            if len(screenInfo) == 4 and screenInfo[0] == "screenshot":
+                screenshotData[screenInfo[2]] = self.neuralEngine.dataEngine.imageToData(screen)
+
+    def getTrainingActionData(self):
+        # Fetch action data
+        data = glob.glob(self.getDataPath . 'data.' + selectedAction + '*.json')
+        actionData = {}
+        for action in data:
+            actionInfo = os.path.basename(action).explode(".")
+            if len(actionInfo) == 4 and actionInfo[0] == "data":
+                f = open(action, "r")
+                content = json.loads(f.read())
+                formatted = []
+                for v in content.items():
+                    if v[0] == "mouse-pos":
+                        v[0] = 1
+                    elif v[0] == "mouse":
+                        v[0] = 2
+                    elif v[0] == "keyboard":
+                        v[0] = 3
+                    else:
+                        v[0] = 4
+                    actionData[v[1]] = v
+        return actionData
 
     def startRun(self):
         self.output.log("Running started.")
@@ -95,12 +138,15 @@ class Script:
                         self.writeRecord(self.keyLoggerData)
                         self.keyLoggerData = []
 
-    def writeRecord(self, record):
+    def getDataPath(self):
         activeHandle = win32gui.GetForegroundWindow()
-        selectedAction = self.actionType.get()
         windowTitle = win32gui.GetWindowText(activeHandle)
 
-        f = open(self.basePath + '/../data/screenshot/' + windowTitle + '/data.' + selectedAction + '.' + str(time.time()) + '.json', "w")
+        return self.basePath + '/../data/screenshot/' + windowTitle + "/"
+
+    def writeRecord(self, record):
+        selectedAction = self.actionType.get()
+        f = open(self.getDataPath() + 'data.' + selectedAction + '.' + str(time.time()) + '.json', "w")
         f.write(json.dumps(record))
         f.close()
 
