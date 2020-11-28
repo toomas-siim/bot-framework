@@ -50,11 +50,18 @@ class Script:
 
     def logMouseData(self, coord, button, pressed):
         if self.readyForRecording() == True:
-            self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), str(button), coord, pressed))
+            self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), str(button), pressed))
 
     def logKeyboardData(self, key, pressed):
         if self.readyForRecording() == True:
             self.keyLoggerData.append(('keyboard', int(round(time.time() * 1000)), str(key), pressed))
+
+    def getMousePosition(self):
+        activeHandle = win32gui.GetForegroundWindow()
+        if activeHandle:
+            rect = win32gui.GetWindowRect(activeHandle)
+            mouseAbs = self.inputEngine.mouseController.position
+            return (mouseAbs[0] - rect[0], mouseAbs[1] - rect[1])
 
     def mouseRecordLoop(self):
         self.output.log("Mouse record loop started")
@@ -66,10 +73,12 @@ class Script:
             time.sleep(0.01)
             if self.readyForRecording() == True and time.time() > lastUpdate: # Update once per second, as with screen.
                 lastUpdate = time.time()
-                self.keyLoggerData.append(('mouse', int(round(time.time() * 1000)), self.inputEngine.mouseController.position))
-                if len(self.keyLoggerData) > 0:
-                    self.writeRecord(self.keyLoggerData)
-                    self.keyLoggerData = []
+                mousePos = self.getMousePosition()
+                if mousePos:
+                    self.keyLoggerData.append(('mouse-pos', int(round(time.time() * 1000)), mousePos))
+                    if len(self.keyLoggerData) > 0:
+                        self.writeRecord(self.keyLoggerData)
+                        self.keyLoggerData = []
 
     def writeRecord(self, record):
         activeHandle = win32gui.GetForegroundWindow()
