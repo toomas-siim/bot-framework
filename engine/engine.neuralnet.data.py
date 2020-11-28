@@ -19,10 +19,3 @@ class NeuralNetDataEngine:
     # converts to ascii number
     def textToData(self, text):
         return int("".join([str(ord(c)) for c in s]))
-
-    def processData(self, dataX, dataY):
-        resolution = (1920, 1080)
-        dataX = dataX.reshape(len(dataX), resolution[0], resolution[1], 1)
-        dataY = dataY.reshape(len(dataY), resolution[0], resolution[1], 1)
-
-        return (dataX, dataY)
