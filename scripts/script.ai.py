@@ -40,7 +40,20 @@ class Script:
     def startTrain(self):
         self.output.log("Training started.")
         self.statusLabel.set("Starting training...")
-        selectedAction = self.actionType.get()
+        (inputData, outputData) = self.generateDataForModel()
+        inputDimensions = inputData[0].shape
+        outputDimension = len(outputData[0])
+        self.output.log("Input/Output dimensions: " + str(inputDimensions) + " / " + str(outputDimension))
+        #(inputData, outputData) = self.neuralEngine.dataEngine.normalizeData(inputData, outputData)
+        self.neuralEngine.buildModel(inputDimensions, outputDimension)
+        self.neuralEngine.compileModel()
+        inputData = self.neuralEngine.dataEngine.reshapeData(inputData, ( inputDimensions[0], inputDimensions[1], 3))
+        outputData = self.neuralEngine.dataEngine.reshapeData(outputData, ( outputDimension ), True)
+        print(str(len(inputData[0][0])))
+        self.neuralEngine.trainModel(inputData, outputData)
+
+
+    def generateDataForModel(self):
         screenData = self.getTrainingScreenData()
         actionData = self.getTrainingActionData()
 
@@ -55,6 +68,8 @@ class Script:
                 absoluteInputData.append(screenshot)
             else:
                 self.output.log("Missing screenshot for: " + str(int(int(key) / 1000)))
+
+        return (absoluteInputData, absoluteOutputData)
 
     def getTrainingScreenData(self):
         selectedAction = self.actionType.get()
@@ -80,6 +95,7 @@ class Script:
                 content = json.loads(f.read())
                 formatted = []
                 for v in content:
+                    # Action type
                     if v[0] == "mouse-pos":
                         v[0] = 1
                     elif v[0] == "mouse":
@@ -88,6 +104,13 @@ class Script:
                         v[0] = 3
                     else:
                         v[0] = 4
+                    # Button / Key type
+                    if v[2] == 'Button.left':
+                        v[2] = 1
+                    elif v[2] == 'Button.right':
+                        v[2] = 2
+                    else:
+                        v[2] = 3
                     actionData[int(v[1])] = v
         return actionData
 

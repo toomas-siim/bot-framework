@@ -64,7 +64,7 @@ class CaptureEngine:
             return self.formatImage(im)
 
     def formatImage(self, imageObj):
-        maxsize = (1028, 1028)
+        maxsize = (512, 512)
         imageObj.thumbnail(maxsize, PIL.Image.ANTIALIAS)
         return imageObj
 

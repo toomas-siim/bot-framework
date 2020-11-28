@@ -25,15 +25,12 @@ class NeuralNetEngine:
         dataY = to_categorical(dataY)
         return (dataX, dataY)
 
-    def buildModel(self):
-        expectedOutput = 4 # idk, must be defined in a script?
-        resolution = (1920, 1080)
-
+    def buildModel(self, inputDimensions, outputDimension):
         model = Sequential()
-        model.add(Conv2D(resolution[0] * 2, kernel_size=3, activation='relu', input_shape=(resolution[0], resolution[1], 1)))
-        model.add(Conv2D(resolution[0], kernel_size=3, activation='relu'))
+        model.add(Conv2D(inputDimensions[0] * 2, kernel_size=3, activation='relu', input_shape=(1, inputDimensions[0], inputDimensions[1], 3)))
+        model.add(Conv2D(inputDimensions[0], kernel_size=3, activation='relu'))
         model.add(Flatten())
-        model.add(Dense(expectedOutput, activation='softmax'))
+        model.add(Dense(outputDimension, activation='softmax'))
         self.model = model
 
     def compileModel(self):
