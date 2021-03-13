@@ -31,6 +31,12 @@ class Script:
         self.recordingThread = _thread.start_new_thread(self.recordLoop, ())
         self.mouseRecordingThread = _thread.start_new_thread(self.mouseRecordLoop, ())
 
+        # Debug - remove later
+        #self.actionType.delete(0, END)
+        #self.actionType.insert(0, 'smelting')
+        #self.selectedWindowTitle = "RuneLite - Chuthulun"
+        #self.startTrain()
+
     def trainButtons(self):
         top = Frame(self.container)
         top.pack()
@@ -43,17 +49,21 @@ class Script:
         (inputData, outputData) = self.generateDataForModel()
         inputDimensions = inputData[0].shape
         outputDimension = len(outputData[0])
-        self.output.log("Input/Output dimensions: " + str(inputDimensions) + " / " + str(outputDimension))
-        #(inputData, outputData) = self.neuralEngine.dataEngine.normalizeData(inputData, outputData)
-        self.neuralEngine.buildModel(inputDimensions, outputDimension)
-        self.neuralEngine.compileModel()
-        inputData = self.neuralEngine.dataEngine.reshapeData(inputData, ( inputDimensions[0], inputDimensions[1], 3))
+
+        inputData = self.neuralEngine.dataEngine.reshapeData(inputData, inputDimensions, True)
+        inputDimensions = inputData[0].shape
         outputData = self.neuralEngine.dataEngine.reshapeData(outputData, ( outputDimension ), True)
-        print(str(len(inputData[0][0])))
+        outputDimension = len(outputData[0])
+
+        (inputData, outputData) = self.neuralEngine.dataEngine.normalizeData(inputData, outputData)
+        self.neuralEngine.buildModel(inputDimensions[0], outputDimension)
+        self.neuralEngine.compileModel()
         self.neuralEngine.trainModel(inputData, outputData)
+        self.output.log("Training finished")
 
 
     def generateDataForModel(self):
+        self.neuralEngine.dataEngine.extractZipData(self.getZippedPath(), self.getDataPath());
         screenData = self.getTrainingScreenData()
         actionData = self.getTrainingActionData()
 
@@ -122,10 +132,12 @@ class Script:
         if self.recordStatus == False:
             self.recordStatus = True
             self.statusLabel.set("Recording gameplay for data.")
-            self.recordBtn.set('Recording')
+            self.recordBtn.set('Stop recording')
         else:
+            selectedAction = self.actionType.get()
             self.recordStatus = False
-            self.statusLabel.set("Recording stopped.")
+            self.statusLabel.set("Recording stopped, saving zip file.")
+            self.neuralEngine.dataEngine.zipData(self.getZippedPath(), self.getDataPath() + '*.' + selectedAction + '.*')
             self.recordBtn.set('Record')
 
     def readyForRecording(self):
@@ -172,6 +184,10 @@ class Script:
 
     def getDataPath(self):
         return self.basePath + '/../data/screenshot/' + self.selectedWindowTitle + "/"
+
+    def getZippedPath(self):
+        selectedAction = self.actionType.get()
+        return self.basePath + '/../data/zipped/' + 'data.' + selectedAction + '.zip'
 
     def writeRecord(self, record):
         selectedAction = self.actionType.get()
