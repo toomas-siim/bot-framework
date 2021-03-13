@@ -10,6 +10,7 @@ import glob
 class Script:
     name = "AI"
     status = "stopped"
+    runningStatus = False
     recordStatus = False
     recordingThread = None
     selectedWindowTitle = None
@@ -28,14 +29,9 @@ class Script:
         self.recordBtn = self.createButton(self.container, "Record", self.startRecord)
         self.trainButtons()
         self.statusLabel.set("AI process started.")
+        self.workingThread = _thread.start_new_thread(self.processLoop, ())
         self.recordingThread = _thread.start_new_thread(self.recordLoop, ())
         self.mouseRecordingThread = _thread.start_new_thread(self.mouseRecordLoop, ())
-
-        # Debug - remove later
-        #self.actionType.delete(0, END)
-        #self.actionType.insert(0, 'smelting')
-        #self.selectedWindowTitle = "RuneLite - Chuthulun"
-        #self.startTrain()
 
     def trainButtons(self):
         top = Frame(self.container)
@@ -127,6 +123,15 @@ class Script:
     def startRun(self):
         self.output.log("Running started.")
         self.statusLabel.set("Running...")
+        if self.runningStatus == False:
+            self.runningStatus = True
+            self.statusLabel.set("Running.")
+            self.recordBtn.set('Stop running')
+        else:
+            selectedAction = self.actionType.get()
+            self.runningStatus = False
+            self.statusLabel.set("Stopped runnning")
+            self.recordBtn.set('Run')
 
     def startRecord(self):
         if self.recordStatus == False:
@@ -195,13 +200,25 @@ class Script:
         f.write(json.dumps(record))
         f.close()
 
-    def createScreen(self):
+    def createScreen(self, save = True):
         activeHandle = win32gui.GetForegroundWindow()
         selectedAction = self.actionType.get()
         windowTitle = win32gui.GetWindowText(activeHandle)
         # Screenshot
         shot = self.captureEngine.screenshot(window_title = windowTitle)
-        shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(int(time.time())) + '.jpg')
+        if save = True:
+            shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(int(time.time())) + '.jpg')
+        else:
+            return shot
+
+    def processLoop(self):
+        self.output.log("Process loop started")
+        while True:
+            time.sleep(1)
+            if self.runningStatus == True:
+                # @TODO: Need to run a prediction based on the screenshot and reformat the result.
+                screen = self.createScreen(False)
+
 
     def recordLoop(self):
         self.output.log("Record loop started")

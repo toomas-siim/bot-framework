@@ -27,7 +27,8 @@ class NeuralNetDataEngine:
         data = glob.glob(path)
         actionData = {}
         for file in data:
-            zipf.write(file, os.path.relpath(file, os.path.join(path, '..')))
+            zipf.write(file, "./" + os.path.basename(file))
+            os.remove(file)
         zipf.close()
 
     def extractZipData(self, zipPath, destDir):
