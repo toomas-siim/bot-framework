@@ -206,7 +206,7 @@ class Script:
         windowTitle = win32gui.GetWindowText(activeHandle)
         # Screenshot
         shot = self.captureEngine.screenshot(window_title = windowTitle)
-        if save = True:
+        if save is True:
             shot.save(self.basePath + '/../data/screenshot/' + windowTitle + '/screenshot.' + selectedAction + '.' + str(int(time.time())) + '.jpg')
         else:
             return shot
