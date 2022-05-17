@@ -28,27 +28,21 @@ class NeuralNetEngine:
         return (dataX, dataY)
 
     def buildModel(self, inputDimension, outputDimension):
-        #model = Sequential()
-        #model.add(Conv2D(inputDimensions[0] * 2, kernel_size=3, activation='relu', input_shape=(inputDimensions[0], inputDimensions[1], 3)))
-        #model.add(Conv2D(inputDimensions[0], kernel_size=3, activation='relu'))
-        #model.add(Flatten())
-        #model.add(Dense(outputDimension, activation='softmax'))
+        model = Sequential()
+        model.add(Conv2D(inputDimension, kernel_size=3, activation='relu', input_shape=(inputDimension, 96, 2)))
+        # model.add(Conv2D(inputDimension, kernel_size=3, activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(outputDimension, activation='softmax'))
         self.output.log("Creating a new model.")
         self.output.log("Input dimensions: " + str(inputDimension))
         self.output.log("Output dimensions: " + str(outputDimension))
-        model = Sequential()
-        model.add(Dense(int(inputDimension), input_shape=(1, inputDimension)))
-        #model.add(LSTM(int(inputDimension), input_shape=(1, inputDimension), return_sequences=True))
-        #model.add(LSTM(int(inputDimension) * 4, input_shape=(1, inputDimension), return_sequences=True))
-        model.add(Dense(int(outputDimension), input_shape=(1, int(inputDimension)), activation='relu'))
-        model.compile(loss='mean_squared_error', optimizer=Adam(decay=1e-6))
         self.model = model
 
     def compileModel(self):
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     def trainModel(self, dataX, dataY):
-        self.model.fit(dataX, dataY, epochs=30)
+        self.model.fit(dataX, dataY, epochs=3, batch_size=1, workers=6)
 
     def predict(self, dataX):
         return self.model.predict(dataX)

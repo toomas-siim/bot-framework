@@ -1,5 +1,6 @@
 import os
-from keras.preprocessing import image
+from keras.utils import load_img
+from keras.utils import img_to_array
 from sklearn.preprocessing import MinMaxScaler
 import np
 import zipfile
@@ -17,9 +18,12 @@ class NeuralNetDataEngine:
         self.output = output
         self.output.log("Neural net data engine initialized.")
 
-    def imageToData(self, path):
-        img = image.load_img(path).convert('LA')
-        input_arr = image.img_to_array(img)
+    def imagePathToData(self, path):
+        img = load_img(path).convert('LA')
+        return self.imageToData(img)
+
+    def imageToData(self, screen):
+        input_arr = img_to_array(screen)
         return input_arr
 
     def zipData(self, zipPath, path):
@@ -41,8 +45,8 @@ class NeuralNetDataEngine:
             if flatten == True:
                 result.append(np.reshape(np.array(v), dim).flatten())
             else:
-                result.append(np.reshape(v, dim))
-        return np.asarray(result)
+                result.append(np.reshape(np.array(v), dim))
+        return np.array(result)
 
     def normalizeData(self, inputData, outputData):
         # normalize the input dataset

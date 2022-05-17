@@ -46,12 +46,12 @@ class Script:
         inputDimensions = inputData[0].shape
         outputDimension = len(outputData[0])
 
-        inputData = self.neuralEngine.dataEngine.reshapeData(inputData, inputDimensions, True)
+        inputData = self.neuralEngine.dataEngine.reshapeData(inputData, inputDimensions, False)
         inputDimensions = inputData[0].shape
-        outputData = self.neuralEngine.dataEngine.reshapeData(outputData, ( outputDimension ), True)
+        outputData = self.neuralEngine.dataEngine.reshapeData(outputData, ( outputDimension ), False)
         outputDimension = len(outputData[0])
 
-        (inputData, outputData) = self.neuralEngine.dataEngine.normalizeData(inputData, outputData)
+        # (inputData, outputData) = self.neuralEngine.dataEngine.normalizeData(inputData, outputData)
         self.neuralEngine.buildModel(inputDimensions[0], outputDimension)
         self.neuralEngine.compileModel()
         self.neuralEngine.trainModel(inputData, outputData)
@@ -86,7 +86,7 @@ class Script:
             basename = str(os.path.basename(screen))
             screenInfo = basename.split(".")
             if len(screenInfo) == 4 and screenInfo[0] == "screenshot":
-                screenshotData[int(screenInfo[2])] = self.neuralEngine.dataEngine.imageToData(screen)
+                screenshotData[int(screenInfo[2])] = self.neuralEngine.dataEngine.imagePathToData(screen)
         return screenshotData
 
     def getTrainingActionData(self):
@@ -130,7 +130,7 @@ class Script:
         else:
             selectedAction = self.actionType.get()
             self.runningStatus = False
-            self.statusLabel.set("Stopped runnning")
+            self.statusLabel.set("Stopped running")
             self.recordBtn.set('Run')
 
     def startRecord(self):
@@ -217,7 +217,9 @@ class Script:
             time.sleep(1)
             if self.runningStatus == True:
                 # @TODO: Need to run a prediction based on the screenshot and reformat the result.
-                screen = self.createScreen(False)
+                screen = self.neuralEngine.dataEngine.imageToData(self.createScreen(False))
+                inputData = self.neuralEngine.dataEngine.reshapeData([screen], screen.shape, False)
+                self.output.log(self.neuralEngine.predict(screen))
 
 
     def recordLoop(self):
